@@ -1,12 +1,26 @@
 import Producto from "./Producto.js";
 
-const productos = []
+const productos = JSON.parse(localStorage.getItem('productos'));
 const btnAgregarProducto = document.getElementById('miBoton');
 const listaP= document.getElementById('listaProductos');
 const listaPFiltrados= document.getElementById('listaProductosFiltrados');
 const filtroNombre = document.getElementById('filtroNombre');
+const resetCarrito = document.getElementById('resetCarrito');
 
 filtroNombre.onkeyup = filtrarLista;
+cargarCarritoJSon()
+
+function cargarCarritoJSon()
+{
+  for(let producto of productos){
+
+    let nuevoItem = document.createElement("li");
+    nuevoItem.id = producto.id
+    nuevoItem.textContent = `${producto.nombre} - Cantidad:${producto.cantidad} - precio: ${producto.precio}`;
+    listaP.appendChild(nuevoItem);
+  }
+  actualizarTotal();
+}
 
 if (btnAgregarProducto) {
   btnAgregarProducto.addEventListener('click', function() {
@@ -35,6 +49,7 @@ if (btnAgregarProducto) {
       document.getElementById("txtPrecioP").value = "";
 
       actualizarTotal();
+      guardarCarritoJSon()
 
     }else {
       alert('ingresa algo en todos los campos capo');
@@ -63,6 +78,7 @@ listaP.addEventListener('click', (e)=> {
   if(e.target.tagName === "LI")
   {
     quitarProductoLista(e.target.id);
+    guardarCarritoJSon()
     actualizarTotal();
     e.target.remove();
   }
@@ -80,20 +96,37 @@ function filtrarLista() {
   if(filtroNombre.value.length > 0) {
     listaP.style.display = "none"
     listaPFiltrados.style.display = "block"
+    listaPFiltrados.innerHTML = "";
     for (const item of productos) {
       console.log(item.nombre)
-      if (item.nombre.includes(filtroNombre.textContent)) {
+      if (item.nombre.includes(filtroNombre.value)) {
         let itemFiltrado = document.createElement("li");
         itemFiltrado.textContent = `${item.nombre} - Cantidad:${item.cantidad} - precio: ${item.precio}`;
         listaPFiltrados.appendChild(itemFiltrado);
       }
     }
-
   } else {
     console.log("muestro comun");
     listaP.style.display = "block"
     listaPFiltrados.style.display = "none"
-    listaPFiltrados.clear();
+    listaPFiltrados.innerHTML = "";
   }
 
 }
+
+function vaciarCarrito() {
+  productos.splice(0, productos.length);
+  listaP.innerHTML = "";
+  actualizarTotal();
+  console.log("hola wenas tardes");
+}
+
+if(resetCarrito){
+  resetCarrito.addEventListener('click', vaciarCarrito)
+}
+
+function guardarCarritoJSon()
+{
+  localStorage.setItem("productos", JSON.stringify(productos));
+}
+
