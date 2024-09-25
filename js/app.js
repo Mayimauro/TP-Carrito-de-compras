@@ -1,6 +1,6 @@
 import Producto from "./Producto.js";
 
-const productos = JSON.parse(localStorage.getItem('productos'));
+let productos = []
 const btnAgregarProducto = document.getElementById('miBoton');
 const listaP= document.getElementById('listaProductos');
 const listaPFiltrados= document.getElementById('listaProductosFiltrados');
@@ -12,14 +12,18 @@ cargarCarritoJSon()
 
 function cargarCarritoJSon()
 {
-  for(let producto of productos){
+  let productosj = JSON.parse(localStorage.getItem('productos'));
+  if(productosj){
+    productos = productosj;
+    for(let producto of productos){
 
-    let nuevoItem = document.createElement("li");
-    nuevoItem.id = producto.id
-    nuevoItem.textContent = `${producto.nombre} - Cantidad:${producto.cantidad} - precio: ${producto.precio}`;
-    listaP.appendChild(nuevoItem);
+      let nuevoItem = document.createElement("li");
+      nuevoItem.id = producto.id
+      nuevoItem.textContent = `${producto.nombre} - Cantidad:${producto.cantidad} - precio: ${producto.precio}`;
+      listaP.appendChild(nuevoItem);
+    }
+    actualizarTotal();
   }
-  actualizarTotal();
 }
 
 if (btnAgregarProducto) {
